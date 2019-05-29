@@ -1,4 +1,4 @@
-package com.swago.eightball
+package com.swago.eightball.model
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 

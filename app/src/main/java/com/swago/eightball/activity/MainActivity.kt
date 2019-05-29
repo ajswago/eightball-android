@@ -1,15 +1,17 @@
-package com.swago.eightball
+package com.swago.eightball.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.squareup.okhttp.Callback
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 import com.squareup.okhttp.Response
+import com.swago.eightball.BuildConfig
+import com.swago.eightball.R
+import com.swago.eightball.model.Message
 
 import kotlinx.android.synthetic.main.activity_main.*;
 import java.io.IOException
