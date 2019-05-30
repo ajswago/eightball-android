@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        messageText.text = "";
+        eightball.text = "";
         messageButton.setOnClickListener { v ->
             messageButton.isEnabled = false
             getRandomMessage() }
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                 val message = jacksonObjectMapper()
                     .readValue<Message>(response?.body()?.string() ?: "").name
                 runOnUiThread {
-                    messageText.text = message
+                    eightball.text = message
                     messageButton.isEnabled = true
                 }
             }
