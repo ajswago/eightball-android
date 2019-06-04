@@ -1,14 +1,16 @@
 package com.swago.eightball.view
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import com.swago.eightball.R
+import android.text.StaticLayout
+import android.os.Build
+import android.text.Layout
+
 
 /**
  * TODO: document your custom view class.
@@ -22,6 +24,23 @@ class EightballView : View {
     private var textPaint: TextPaint? = null
     private var textWidth: Float = 0f
     private var textHeight: Float = 0f
+    private var staticLayout: StaticLayout? = null
+    private var staticTextWidth: Float = 0f
+    private var staticTextHeight: Float = 0f
+
+    private var trianglePath: Path? = null
+    private var trianglePaint: Paint? = null
+
+    private var triangleTopLeftX: Float = 0f
+    private var triangleTopLeftY: Float = 0f
+    private var triangleTopRightX: Float = 0f
+    private var triangleTopRightY: Float = 0f
+    private var triangleBottomX: Float = 0f
+    private var triangleBottomY: Float = 0f
+
+    private var triangleFillColor: Int = Color.parseColor("#000771")
+    private var triangleStrokeColor: Int = Color.parseColor("#213f94")
+    private var trianglePct = 0.25f
 
     /**
      * The text to draw
@@ -31,6 +50,30 @@ class EightballView : View {
         set(value) {
             _text = value
             invalidateTextPaintAndMeasurements()
+            staticTextWidth = width * trianglePct * 0.5f
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                staticLayout =
+                    StaticLayout.Builder.obtain(
+                        text,
+                        0,
+                        text?.length ?: 0,
+                        textPaint,
+                        staticTextWidth.toInt())
+                        .setAlignment(Layout.Alignment.ALIGN_CENTER)
+                        .setLineSpacing(0.0f, 1.0f)
+                        .setIncludePad (false).build()
+            } else {
+                staticLayout = StaticLayout(
+                    text,
+                    textPaint,
+                    staticTextWidth.toInt(),
+                    Layout.Alignment.ALIGN_CENTER,
+                    1.0f,
+                    0.0f,
+                    false
+                )
+            }
+            staticTextHeight = staticLayout!!.height.toFloat()
             invalidate()
         }
 
@@ -88,6 +131,12 @@ class EightballView : View {
 
         a.recycle()
 
+        trianglePath = Path()
+
+        trianglePaint = Paint().apply {
+            strokeWidth = 8.0f
+        }
+
         // Set up a default TextPaint object
         textPaint = TextPaint().apply {
             flags = Paint.ANTI_ALIAS_FLAG
@@ -112,24 +161,35 @@ class EightballView : View {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        // TODO: consider storing these as member variables to reduce
-        // allocations per draw cycle.
-        val paddingLeft = paddingLeft
-        val paddingTop = paddingTop
-        val paddingRight = paddingRight
-        val paddingBottom = paddingBottom
-
-        val contentWidth = width - paddingLeft - paddingRight
-        val contentHeight = height - paddingTop - paddingBottom
+        val triangleSide = (width * trianglePct).toInt()
+        val triangleAltitude = triangleSide * (Math.sqrt(3.0).toFloat() / 2.0f)
 
         text?.let {
-            // Draw the text.
-            canvas.drawText(
-                it,
-                paddingLeft + (contentWidth - textWidth) / 2,
-                paddingTop + (contentHeight + textHeight) / 2,
-                textPaint
-            )
+
+            triangleTopLeftX = (width / 2.0f) - (triangleSide / 2.0f)
+            triangleTopLeftY = (height / 2.0f) - (triangleAltitude / 3.0f)
+            triangleTopRightX = (width / 2.0f) + (triangleSide / 2.0f)
+            triangleTopRightY = (height / 2.0f) - (triangleAltitude / 3.0f)
+            triangleBottomX = (width / 2.0f)
+            triangleBottomY = (height / 2.0f) + (triangleAltitude * 2.0f / 3.0f)
+            trianglePath?.moveTo(triangleTopLeftX, triangleTopLeftY)
+            trianglePath?.lineTo(triangleTopRightX, triangleTopRightY)
+            trianglePath?.lineTo(triangleBottomX, triangleBottomY)
+            trianglePath?.lineTo(triangleTopLeftX, triangleTopLeftY)
+            trianglePath?.close()
+            trianglePaint?.color = triangleFillColor
+            trianglePaint?.style = Paint.Style.FILL
+            canvas.drawPath(trianglePath!!, trianglePaint!!)
+            trianglePaint?.color = triangleStrokeColor
+            trianglePaint?.style = Paint.Style.STROKE
+            trianglePaint?.strokeJoin = Paint.Join.ROUND
+            canvas.drawPath(trianglePath!!, trianglePaint!!)
+
+            canvas.save();
+            canvas.translate((width / 2) - (staticTextWidth / 2.0f), (height / 2) - (staticTextHeight / 2))
+            staticLayout?.draw(canvas);
+            canvas.restore();
+
         }
     }
 }

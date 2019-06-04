@@ -18,7 +18,7 @@
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintVertical_bias="0.4"
             app:text=""
-            app:textSize="20sp"
+            app:textSize="14sp"
             app:textColor="@android:color/white"
             android:layout_margin="20dp"/>
 
