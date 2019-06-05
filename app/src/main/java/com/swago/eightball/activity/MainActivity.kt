@@ -16,8 +16,13 @@ import com.swago.eightball.model.Message
 import kotlinx.android.synthetic.main.activity_main.*;
 import java.io.IOException
 import java.lang.String.format
+import ShakeDetector.OnShakeListener
+import ShakeDetector
+
 
 class MainActivity : AppCompatActivity() {
+
+    private var mShakeDetector: ShakeDetector? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +32,32 @@ class MainActivity : AppCompatActivity() {
         messageButton.setOnClickListener { v ->
             messageButton.isEnabled = false
             getRandomMessage() }
+
+        mShakeDetector = ShakeDetector()
+        mShakeDetector?.setOnShakeListener(object : OnShakeListener {
+
+            override fun onShake(count: Int) {
+                /*
+				 * The following method, "handleShakeEvent(count):" is a stub //
+				 * method you would use to setup whatever you want done once the
+				 * device has been shook.
+				 */
+                messageButton.isEnabled = false
+                getRandomMessage()
+            }
+        })
+    }
+
+    public override fun onResume() {
+        super.onResume()
+        // Add the following line to register the Session Manager Listener onResume
+        mShakeDetector?.resumeListening(this)
+    }
+
+    public override fun onPause() {
+        // Add the following line to unregister the Sensor Manager onPause
+        mShakeDetector?.pauseListening(this)
+        super.onPause()
     }
 
     fun getRandomMessage() {
