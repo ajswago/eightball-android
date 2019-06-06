@@ -28,7 +28,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        eightball.text = "";
+        getRandomMessage(animated = false)
+
         messageButton.setOnClickListener { v ->
             messageButton.isEnabled = false
             getRandomMessage() }
@@ -60,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
-    fun getRandomMessage() {
+    fun getRandomMessage(animated: Boolean = true) {
         val client = OkHttpClient()
         Log.d("API CALL", "Making Call")
         client.newCall(Request.Builder()
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 val message = jacksonObjectMapper()
                     .readValue<Message>(response?.body()?.string() ?: "").name
                 runOnUiThread {
-                    eightball.text = message
+                    eightball.setText(message, animated)
                     messageButton.isEnabled = true
                 }
             }

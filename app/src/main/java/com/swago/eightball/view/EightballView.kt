@@ -1,5 +1,6 @@
 package com.swago.eightball.view
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
@@ -10,6 +11,9 @@ import com.swago.eightball.R
 import android.text.StaticLayout
 import android.os.Build
 import android.text.Layout
+import android.util.Log
+import android.view.animation.LinearInterpolator
+import java.lang.String.format
 
 
 /**
@@ -41,6 +45,7 @@ class EightballView : View {
     private var triangleFillColor: Int = Color.parseColor("#000771")
     private var triangleStrokeColor: Int = Color.parseColor("#213f94")
     private var trianglePct = 0.25f
+    private var triangleAlpha = 1.0f
 
     /**
      * The text to draw
@@ -76,6 +81,33 @@ class EightballView : View {
             staticTextHeight = staticLayout!!.height.toFloat()
             invalidate()
         }
+
+    fun setText(value: String, animated: Boolean) {
+        if (animated) {
+            val oldText = text
+            var newText = oldText
+            val valueAnimator = ValueAnimator.ofFloat(0.0f, 1.0f)
+            valueAnimator.addUpdateListener {
+                val animatedValue = it.animatedValue as Float
+                if (animatedValue < 0.3f) {
+                    triangleAlpha = 1.0f - (animatedValue / 0.3f)
+                } else if (animatedValue > 0.7f) {
+                    triangleAlpha = 1.0f - ((1.0f - animatedValue) / 0.3f)
+                    newText = value
+                } else {
+                    triangleAlpha = 0.0f
+                }
+                Log.d("ANIMATION", format("Value: %s, Alpha: %s", animatedValue, triangleAlpha))
+                text = newText
+            }
+            valueAnimator.interpolator = LinearInterpolator()
+            valueAnimator.duration = 600
+            valueAnimator.start()
+        } else {
+            triangleAlpha = 1.0f
+            text = value
+        }
+    }
 
     /**
      * The font color
@@ -153,6 +185,7 @@ class EightballView : View {
         textPaint?.let {
             it.textSize = textSize
             it.color = textColor
+            it.alpha = (triangleAlpha * 255).toInt()
             textWidth = it.measureText(text)
             textHeight = it.fontMetrics.bottom
         }
@@ -178,9 +211,11 @@ class EightballView : View {
             trianglePath?.lineTo(triangleTopLeftX, triangleTopLeftY)
             trianglePath?.close()
             trianglePaint?.color = triangleFillColor
+            trianglePaint?.alpha = (triangleAlpha * 255).toInt()
             trianglePaint?.style = Paint.Style.FILL
             canvas.drawPath(trianglePath!!, trianglePaint!!)
             trianglePaint?.color = triangleStrokeColor
+            trianglePaint?.alpha = (triangleAlpha * 255).toInt()
             trianglePaint?.style = Paint.Style.STROKE
             trianglePaint?.strokeJoin = Paint.Join.ROUND
             canvas.drawPath(trianglePath!!, trianglePaint!!)
