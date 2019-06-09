@@ -199,32 +199,33 @@ class EightballView : View {
 
         text?.let {
 
-            triangleTopLeftX = (width / 2.0f) - (triangleSide / 2.0f)
-            triangleTopLeftY = (height / 2.0f) - (triangleAltitude / 3.0f)
-            triangleTopRightX = (width / 2.0f) + (triangleSide / 2.0f)
-            triangleTopRightY = (height / 2.0f) - (triangleAltitude / 3.0f)
-            triangleBottomX = (width / 2.0f)
-            triangleBottomY = (height / 2.0f) + (triangleAltitude * 2.0f / 3.0f)
-            trianglePath?.moveTo(triangleTopLeftX, triangleTopLeftY)
-            trianglePath?.lineTo(triangleTopRightX, triangleTopRightY)
-            trianglePath?.lineTo(triangleBottomX, triangleBottomY)
-            trianglePath?.lineTo(triangleTopLeftX, triangleTopLeftY)
-            trianglePath?.close()
-            trianglePaint?.color = triangleFillColor
-            trianglePaint?.alpha = (triangleAlpha * 255).toInt()
-            trianglePaint?.style = Paint.Style.FILL
-            canvas.drawPath(trianglePath!!, trianglePaint!!)
-            trianglePaint?.color = triangleStrokeColor
-            trianglePaint?.alpha = (triangleAlpha * 255).toInt()
-            trianglePaint?.style = Paint.Style.STROKE
-            trianglePaint?.strokeJoin = Paint.Join.ROUND
-            canvas.drawPath(trianglePath!!, trianglePaint!!)
+            if (it.isNotBlank()) {
+                triangleTopLeftX = (width / 2.0f) - (triangleSide / 2.0f)
+                triangleTopLeftY = (height / 2.0f) - (triangleAltitude / 3.0f)
+                triangleTopRightX = (width / 2.0f) + (triangleSide / 2.0f)
+                triangleTopRightY = (height / 2.0f) - (triangleAltitude / 3.0f)
+                triangleBottomX = (width / 2.0f)
+                triangleBottomY = (height / 2.0f) + (triangleAltitude * 2.0f / 3.0f)
+                trianglePath?.moveTo(triangleTopLeftX, triangleTopLeftY)
+                trianglePath?.lineTo(triangleTopRightX, triangleTopRightY)
+                trianglePath?.lineTo(triangleBottomX, triangleBottomY)
+                trianglePath?.lineTo(triangleTopLeftX, triangleTopLeftY)
+                trianglePath?.close()
+                trianglePaint?.color = triangleFillColor
+                trianglePaint?.alpha = (triangleAlpha * 255).toInt()
+                trianglePaint?.style = Paint.Style.FILL
+                canvas.drawPath(trianglePath!!, trianglePaint!!)
+                trianglePaint?.color = triangleStrokeColor
+                trianglePaint?.alpha = (triangleAlpha * 255).toInt()
+                trianglePaint?.style = Paint.Style.STROKE
+                trianglePaint?.strokeJoin = Paint.Join.ROUND
+                canvas.drawPath(trianglePath!!, trianglePaint!!)
 
-            canvas.save();
-            canvas.translate((width / 2) - (staticTextWidth / 2.0f), (height / 2) - (staticTextHeight / 2))
-            staticLayout?.draw(canvas);
-            canvas.restore();
-
+                canvas.save()
+                canvas.translate((width / 2) - (staticTextWidth / 2.0f), (height / 2) - (staticTextHeight / 2))
+                staticLayout?.draw(canvas)
+                canvas.restore()
+            }
         }
     }
 }
