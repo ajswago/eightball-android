@@ -33,7 +33,8 @@ class EightballView : View {
     private var staticTextHeight: Float = 0f
 
     private var trianglePath: Path? = null
-    private var trianglePaint: Paint? = null
+    private var triangleFillPaint: Paint? = null
+    private var triangleStrokePaint: Paint? = null
 
     private var triangleTopLeftX: Float = 0f
     private var triangleTopLeftY: Float = 0f
@@ -165,9 +166,9 @@ class EightballView : View {
 
         trianglePath = Path()
 
-        trianglePaint = Paint().apply {
-            strokeWidth = 8.0f
-        }
+        triangleFillPaint = Paint()
+
+        triangleStrokePaint = Paint()
 
         // Set up a default TextPaint object
         textPaint = TextPaint().apply {
@@ -206,20 +207,25 @@ class EightballView : View {
                 triangleTopRightY = (height / 2.0f) - (triangleAltitude / 3.0f)
                 triangleBottomX = (width / 2.0f)
                 triangleBottomY = (height / 2.0f) + (triangleAltitude * 2.0f / 3.0f)
+                trianglePath?.reset()
                 trianglePath?.moveTo(triangleTopLeftX, triangleTopLeftY)
                 trianglePath?.lineTo(triangleTopRightX, triangleTopRightY)
                 trianglePath?.lineTo(triangleBottomX, triangleBottomY)
                 trianglePath?.lineTo(triangleTopLeftX, triangleTopLeftY)
                 trianglePath?.close()
-                trianglePaint?.color = triangleFillColor
-                trianglePaint?.alpha = (triangleAlpha * 255).toInt()
-                trianglePaint?.style = Paint.Style.FILL
-                canvas.drawPath(trianglePath!!, trianglePaint!!)
-                trianglePaint?.color = triangleStrokeColor
-                trianglePaint?.alpha = (triangleAlpha * 255).toInt()
-                trianglePaint?.style = Paint.Style.STROKE
-                trianglePaint?.strokeJoin = Paint.Join.ROUND
-                canvas.drawPath(trianglePath!!, trianglePaint!!)
+                triangleFillPaint?.color = triangleFillColor
+                triangleFillPaint?.alpha = (triangleAlpha * 255).toInt()
+                triangleFillPaint?.style = Paint.Style.FILL
+                Log.d("Draw", format("Color: %s Alpha: %s Style: %s", triangleFillPaint?.color.toString(), triangleFillPaint?.alpha.toString(), triangleFillPaint?.style.toString()))
+                canvas.drawPath(trianglePath!!, triangleFillPaint!!)
+                triangleStrokePaint?.color = triangleStrokeColor
+                triangleStrokePaint?.alpha = (triangleAlpha * 255).toInt()
+                triangleStrokePaint?.style = Paint.Style.STROKE
+                triangleStrokePaint?.strokeJoin = Paint.Join.ROUND
+                triangleStrokePaint?.strokeWidth = 8.0f
+                triangleStrokePaint?.isDither = true
+                Log.d("Draw", format("Color: %s Alpha: %s Style: %s StrokeWidth: %s", triangleStrokePaint?.color.toString(), triangleStrokePaint?.alpha.toString(), triangleStrokePaint?.style.toString(), triangleStrokePaint?.strokeWidth.toString()))
+                canvas.drawPath(trianglePath!!, triangleStrokePaint!!)
 
                 canvas.save()
                 canvas.translate((width / 2) - (staticTextWidth / 2.0f), (height / 2) - (staticTextHeight / 2))
