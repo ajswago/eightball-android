@@ -16,23 +16,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintVertical_bias="0.4"
+            app:layout_constraintVertical_bias="@dimen/eightball_vertical_bias"
             app:text=""
-            app:textSize="13sp"
+            app:textSize="@dimen/message_text_size"
             app:textColor="@android:color/white"
-            android:layout_margin="20dp"/>
+            android:layout_margin="@dimen/eightball_margin"/>
 
     <Button
         android:id="@+id/messageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get Message"
+        android:text="@string/eightball_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginBottom="40dp"
-        android:layout_marginLeft="20dip"
-        android:layout_marginRight="20dip" />
-
+        android:layout_marginBottom="@dimen/button_bottom_margin" />
 
 </android.support.constraint.ConstraintLayout>

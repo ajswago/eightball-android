@@ -28,21 +28,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Set initial message
+        messageButton.isEnabled = false
         getRandomMessage(animated = false)
 
+        // Set listener for button
         messageButton.setOnClickListener { v ->
             messageButton.isEnabled = false
             getRandomMessage() }
 
+        // Set listener for motion sensor
         mShakeDetector = ShakeDetector()
         mShakeDetector?.setOnShakeListener(object : OnShakeListener {
 
             override fun onShake(count: Int) {
-                /*
-				 * The following method, "handleShakeEvent(count):" is a stub //
-				 * method you would use to setup whatever you want done once the
-				 * device has been shook.
-				 */
                 messageButton.isEnabled = false
                 getRandomMessage()
             }
@@ -51,19 +50,17 @@ class MainActivity : AppCompatActivity() {
 
     public override fun onResume() {
         super.onResume()
-        // Add the following line to register the Session Manager Listener onResume
         mShakeDetector?.resumeListening(this)
     }
 
     public override fun onPause() {
-        // Add the following line to unregister the Sensor Manager onPause
         mShakeDetector?.pauseListening(this)
         super.onPause()
     }
 
     fun getRandomMessage(animated: Boolean = true) {
+//        messageButton.isEnabled = false
         val client = OkHttpClient()
-        Log.d("API CALL", "Making Call")
         client.newCall(Request.Builder()
             .url(format("http://%s/messages/random", BuildConfig.EightballApiUrl))
             .get()
@@ -78,8 +75,10 @@ class MainActivity : AppCompatActivity() {
                 val message = jacksonObjectMapper()
                     .readValue<Message>(response?.body()?.string() ?: "").name
                 runOnUiThread {
-                    eightball.setText(message, animated)
-                    messageButton.isEnabled = true
+                    eightball.setText(message, animated) {
+                        messageButton.isEnabled = true
+                    }
+//                    messageButton.isEnabled = true
                 }
             }
         })

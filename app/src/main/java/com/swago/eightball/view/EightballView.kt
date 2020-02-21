@@ -14,6 +14,9 @@ import android.text.Layout
 import android.util.Log
 import android.view.animation.LinearInterpolator
 import java.lang.String.format
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+
 
 
 /**
@@ -83,7 +86,7 @@ class EightballView : View {
             invalidate()
         }
 
-    fun setText(value: String, animated: Boolean) {
+    fun setText(value: String, animated: Boolean, completion: (() -> Unit)? = null) {
         if (animated) {
             val oldText = text
             var newText = oldText
@@ -103,10 +106,16 @@ class EightballView : View {
             }
             valueAnimator.interpolator = LinearInterpolator()
             valueAnimator.duration = 600
+            valueAnimator.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    completion?.invoke()
+                }
+            })
             valueAnimator.start()
         } else {
             triangleAlpha = 1.0f
             text = value
+            completion?.invoke()
         }
     }
 

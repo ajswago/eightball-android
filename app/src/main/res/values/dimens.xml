@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="message_text_size">13sp</dimen>
+    <dimen name="eightball_margin">20dp</dimen>
+    <dimen name="button_bottom_margin">40dp</dimen>
+
+    <item name="eightball_vertical_bias" format="float" type="dimen">0.4</item>
+</resources>
